@@ -68,7 +68,6 @@ def price_convert(line):
     if price.find(',') < 0:
         price = price + ',00'
     else:
-        #if price.find(',\d') < 0:
         if re.findall(',\S{2}', price) == []:
             price = price + '0'
               
@@ -77,7 +76,7 @@ def price_convert(line):
     return (price)
 
 
-def dict_rplace(line, dict):
+def dict_rplace(line):
     """ Сопоставляем каждую строку файла с каждым ключом словаря,
     т.е. берём ключ - ищем в строке, если нет совпадения,то пишем в
     переменную '**'. Если есть совпадение - пишем значение ключа.
@@ -97,7 +96,8 @@ def line_convert():
     удаляем точку в конце строки, если есть;
     удаляем символ ';' в конце, если есть.
     """
-    for line in open('to_convert.txt'):
+    #  TODO: вынести имя входящего файла как параметр при выполнении скрипта
+    for line in open('to_convert.csv'):
         line = line.rstrip()
         if line.endswith('.') is True:
             line = line[:-1]
@@ -112,7 +112,7 @@ def line_convert():
         
         price = price_convert(line)
         date = str(date)
-        rplace = dict_rplace(line, dict)
+        rplace = dict_rplace(line)
 
         line_final = date + ";;" + price + ";" + rplace
            
@@ -126,7 +126,7 @@ def line_convert():
 
 
 """ Открываем список "точки_олаты-категория" для передачи в словарь."""
-with open('dict.txt','r') as file_dict:
+with open('dict.csv','r') as file_dict:
     dct = eval(file_dict.read())
 
 with open('transcoded_alfa.csv', 'w') as file_result:
