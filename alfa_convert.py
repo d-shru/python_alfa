@@ -66,14 +66,12 @@ def price_convert(line):
     Если не поступление, то добавляем перед ценой '-'
     """
     price = price_find(line)
-    #if price.find(',') < 0:
     if ',' not in price:
         price = price + ',00'
     else:
         if re.findall(',\S{2}', price) == []:
             price = price + '0'
               
-    #if line.find('Основание') < 0 and line.find('командиров') < 0:
     if 'Основание' not in line and 'командиров' not in line:
         price = "-" + price
     return price
