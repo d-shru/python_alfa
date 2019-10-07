@@ -10,6 +10,7 @@
 """
 
 import re
+import csv
 #import datetime
 from datetime import datetime # TODO: выяснить разницу с "import datetime"
 
@@ -21,7 +22,7 @@ def search_date(line):
     """
     date_list = re.findall('\d{2}\.\d{2}\.\d{4}|\d{2}\.\d{2}\.\d{2}', line)
     date_finded = date_list.pop()
-    return (date_finded)
+    return date_finded
 
 
 def date_forward(line):
@@ -33,7 +34,7 @@ def date_forward(line):
     except ValueError:
         date_forwarded = datetime.strptime(search_date(line), '%d.%m.%Y') 
     date_forwarded = datetime.date(date_forwarded)
-    return (date_forwarded)
+    return date_forwarded
 
 
 def date_reverse(line):
@@ -42,7 +43,7 @@ def date_reverse(line):
     """
     date_reversed = datetime.strptime(search_date(line), '%y.%m.%d')
     date_reversed = datetime.date(date_reversed)
-    return (date_reversed)
+    return date_reversed
 
 
 def price_find(line):
@@ -55,7 +56,7 @@ def price_find(line):
         price_finded = price_list[-2]
     else:
         price_finded = price_list[-1]
-    return (price_finded)
+    return price_finded
 
 
 def price_convert(line):
@@ -65,15 +66,17 @@ def price_convert(line):
     Если не поступление, то добавляем перед ценой '-'
     """
     price = price_find(line)
-    if price.find(',') < 0:
+    #if price.find(',') < 0:
+    if ',' not in price:
         price = price + ',00'
     else:
         if re.findall(',\S{2}', price) == []:
             price = price + '0'
               
-    if line.find('Основание') < 0 and line.find('командиров') < 0:
+    #if line.find('Основание') < 0 and line.find('командиров') < 0:
+    if 'Основание' not in line and 'командиров' not in line:
         price = "-" + price
-    return (price)
+    return price
 
 
 def dict_rplace(line):
@@ -81,13 +84,13 @@ def dict_rplace(line):
     т.е. берём ключ - ищем в строке, если нет совпадения,то пишем в
     переменную '**'. Если есть совпадение - пишем значение ключа.
     """
-    for i in dct.keys():
-        if line.find(i) > 0:
-            rplace = dct[i]
+    for dict_key in dct.keys():
+        if dict_key in line:
+            rplace = dct[dict_key]
             break
         else:
             rplace = "**"
-    return (rplace)
+    return rplace
 
 
 def line_convert():
@@ -105,7 +108,7 @@ def line_convert():
             line = line[:-1]
         
         # Если сумма на удержании банком, то дата стоит в виде: yy.mm.dd
-        if line.find(';HOLD;') < 0:  
+        if ';HOLD;' not in line:  
             date = date_forward(line)
         else:
             date = date_reverse(line)
@@ -120,9 +123,9 @@ def line_convert():
         точки оплаты присутствуют в словаре, то выводим их на stdout
         """
         file_result.write(line_final + '\n')
-        if line_final.find('**') > 0:
+        if '**' in line_final:
             print (line)
-    return (line_final)
+    return line_final
 
 
 """ Открываем список "точки_олаты-категория" для передачи в словарь."""
