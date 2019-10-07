@@ -130,7 +130,7 @@ def line_convert():
 
 """ Открываем список "точки_олаты-категория" для передачи в словарь."""
 with open('dict.csv','r') as file_dict:
-    dct = eval(file_dict.read())
+    dct = eval(file_dict.read()) # TODO избавится от eval используя import csv
 
 with open('transcoded_alfa.csv', 'w') as file_result:
     line_convert()
