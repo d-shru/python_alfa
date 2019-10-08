@@ -22,8 +22,8 @@ def search_date(line):
     поэтому берём последний элемент списка.
     """
     date_list = re.findall('\d{2}\.\d{2}\.\d{4}|\d{2}\.\d{2}\.\d{2}', line)
-    date_finded = date_list.pop()
-    return date_finded
+    date_found = date_list.pop()
+    return date_found
 
 
 def date_forward(line):
@@ -54,10 +54,10 @@ def price_find(line):
     """
     price_list = line.split(';')
     if price_list[-1] == '0':
-        price_finded = price_list[-2]
+        price_found = price_list[-2]
     else:
-        price_finded = price_list[-1]
-    return price_finded
+        price_found = price_list[-1]
+    return price_found
 
 
 def price_convert(line):
