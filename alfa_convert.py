@@ -11,6 +11,7 @@
 
 import re
 import csv
+import argparse
 #import datetime
 from datetime import datetime # TODO: выяснить разницу с "import datetime"
 
@@ -87,7 +88,7 @@ def dict_rplace(line):
             rplace = dct[dict_key]
             break
         else:
-            rplace = "**"
+                rplace = "**"
     return rplace
 
 
@@ -97,38 +98,45 @@ def line_convert():
     удаляем точку в конце строки, если есть;
     удаляем символ ';' в конце, если есть.
     """
-    #  TODO: вынести имя входящего файла как параметр при выполнении скрипта
-    for line in open('to_convert.csv'):
-        line = line.rstrip()
-        if line.endswith('.') is True:
-            line = line[:-1]
-        if line.endswith(';') is True:
-            line = line[:-1]
-        
-        # Если сумма на удержании банком, то дата стоит в виде: yy.mm.dd
-        if ';HOLD;' not in line:  
-            date = date_forward(line)
-        else:
-            date = date_reverse(line)
-        
-        price = price_convert(line)
-        date = str(date)
-        rplace = dict_rplace(line)
+    with open(args.file,'r') as file_to_convert:
+        for line in file_to_convert:
+            line = line.rstrip()
+            if line.endswith('.') is True:
+                line = line[:-1]
+            if line.endswith(';') is True:
+                line = line[:-1]
+            
+            # Если сумма на удержании банком, то дата стоит в виде: yy.mm.dd
+            if ';HOLD;' not in line:  
+                date = date_forward(line)
+            else:
+                date = date_reverse(line)
+            
+            price = price_convert(line)
+            date = str(date)
+            rplace = dict_rplace(line)
 
-        line_final = date + ";;" + price + ";" + rplace
-           
-        """ Формируем сконвертированный файл. В случае, если не все 
-        точки оплаты присутствуют в словаре, то выводим их на stdout
-        """
-        file_result.write(line_final + '\n')
-        if '**' in line_final:
-            print (line)
+            line_final = date + ";;" + price + ";" + rplace
+               
+            """ Формируем сконвертированный файл. В случае, если не все 
+            точки оплаты присутствуют в словаре, то выводим их на stdout
+            """
+            file_result.write(line_final + '\n')
+            if '**' in line_final:
+                print (line)
     return line_final
 
 
+parser = argparse.ArgumentParser(description='File to convert, and file dict')
+parser.add_argument('-f', '--file', type=str, default='to_convert.csv', help='Input filename to convert')
+parser.add_argument('-d', '--dict', type=str, default='dict.csv', help='Input dict filename')
+parser.add_argument('-r', '--result', type=str, default='transcoded_alfa.csv', help='Input filename for output result')
+args = parser.parse_args()
+
+
 """ Открываем список "точки_олаты-категория" для передачи в словарь."""
-with open('dict.csv','r') as file_dict:
+with open(args.dict,'r') as file_dict:
     dct = eval(file_dict.read()) # TODO избавится от eval используя import csv
 
-with open('transcoded_alfa.csv', 'w') as file_result:
+with open(args.result, 'w') as file_result:
     line_convert()
