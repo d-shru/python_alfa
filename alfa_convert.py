@@ -128,27 +128,28 @@ def line_convert():
 
 
 parser = argparse.ArgumentParser(description='File to convert, and file dict')
+
 parser.add_argument(
         '-f',
         '--file',
         type=str,
         default='to_convert.csv',
-        help='Input filename to convert'
-        )
+        help='Input filename to convert')
+
 parser.add_argument(
         '-d',
         '--dict',
         type=str,
         default='dict.csv',
-        help='Input dict filename'
-        )
+        help='Input dict filename')
+
 parser.add_argument(
         '-r',
         '--result',
         type=str,
         default='transcoded_alfa.csv',
-        help='Input filename for output result'
-        )
+        help='Input filename for output result')
+
 args = parser.parse_args()
 
 
