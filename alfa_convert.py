@@ -3,21 +3,21 @@
 
 
 """Нужно привести файл банковской выписки к виду,
-   пригодному для загрузки в программу учёта финансов, 
+   пригодному для загрузки в программу учёта финансов,
    представить строки в виде:
-   
+
    2018-11-21;;-1940,90;Транспорт:Общественный транспорт;Метро;C;
 """
 
 import re
 import csv
 import argparse
-#import datetime
-from datetime import datetime # TODO: выяснить разницу с "import datetime"
+from datetime import datetime  # TODO: выяснить разницу с "import datetime"
+
 
 def search_date(line):
     """ Ищем все даты в строке и загоняем в список. Дат может быть
-    несколько: дата совершения операции, дата поступления платежа и 
+    несколько: дата совершения операции, дата поступления платежа и
     дата подтверждения банком. Нас интересует дата совершения операции,
     поэтому берём последний элемент списка.
     """
@@ -27,19 +27,19 @@ def search_date(line):
 
 
 def date_forward(line):
-    """ Функция, приводящая дату в нужный формат. 
+    """ Функция, приводящая дату в нужный формат.
     В некоторых датах год в формате 'YYYY', поэтому ловим исключение
     """
     try:
         date_forwarded = datetime.strptime(search_date(line), '%d.%m.%y')
     except ValueError:
-        date_forwarded = datetime.strptime(search_date(line), '%d.%m.%Y') 
+        date_forwarded = datetime.strptime(search_date(line), '%d.%m.%Y')
     date_forwarded = datetime.date(date_forwarded)
     return date_forwarded
 
 
 def date_reverse(line):
-    """ В некоторых строках даты инвертированы. 
+    """ В некоторых строках даты инвертированы.
     Приводим к нужному формату.
     """
     date_reversed = datetime.strptime(search_date(line), '%y.%m.%d')
@@ -72,7 +72,7 @@ def price_convert(line):
     else:
         if re.findall(',\S{2}', price) == []:
             price += '0'
-              
+
     if 'Основание' not in line and 'командиров' not in line:
         price = "-" + price
     return price
@@ -98,27 +98,27 @@ def line_convert():
     удаляем точку в конце строки, если есть;
     удаляем символ ';' в конце, если есть.
     """
-    with open(args.file,'r') as file_to_convert:
+    with open(args.file, 'r') as file_to_convert:
         for line in file_to_convert:
             line = line.rstrip()
             if line.endswith('.') is True:
                 line = line[:-1]
             if line.endswith(';') is True:
                 line = line[:-1]
-            
+
             # Если сумма на удержании банком, то дата стоит в виде: yy.mm.dd
-            if ';HOLD;' not in line:  
+            if ';HOLD;' not in line:
                 date = date_forward(line)
             else:
                 date = date_reverse(line)
-            
+
             price = price_convert(line)
             date = str(date)
             rplace = dict_rplace(line)
 
             line_final = date + ";;" + price + ";" + rplace
-               
-            """ Формируем сконвертированный файл. В случае, если не все 
+
+            """ Формируем сконвертированный файл. В случае, если не всe
             точки оплаты присутствуют в словаре, то выводим их на stdout
             """
             file_result.write(line_final + '\n')
@@ -154,8 +154,9 @@ args = parser.parse_args()
 
 
 """ Открываем список "точки_олаты-категория" для передачи в словарь."""
-with open(args.dict,'r') as file_dict:
-    dct = eval(file_dict.read()) # TODO избавится от eval используя import csv
+with open(args.dict, 'r') as file_dict:
+    dct = eval(file_dict.read())  # TODO избавится от eval используя import csv
 
 with open(args.result, 'w') as file_result:
     line_convert()
+
