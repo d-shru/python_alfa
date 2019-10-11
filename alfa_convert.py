@@ -68,10 +68,10 @@ def price_convert(line):
     """
     price = price_find(line)
     if ',' not in price:
-        price = price + ',00'
+        price += ',00'
     else:
         if re.findall(',\S{2}', price) == []:
-            price = price + '0'
+            price += '0'
               
     if 'Основание' not in line and 'командиров' not in line:
         price = "-" + price
