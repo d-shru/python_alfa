@@ -88,7 +88,7 @@ def dict_rplace(line):
             rplace = dct[dict_key]
             break
         else:
-                rplace = "**"
+            rplace = "**"
     return rplace
 
 
@@ -116,7 +116,8 @@ def line_convert():
             date = str(date)
             rplace = dict_rplace(line)
 
-            line_final = date + ";;" + price + ";" + rplace
+            #line_final = date + ";;" + price + ";" + rplace
+            line_final = f'{date};;{price};{rplace}'
 
             """ Формируем сконвертированный файл. В случае, если не всe
             точки оплаты присутствуют в словаре, то выводим их на stdout
