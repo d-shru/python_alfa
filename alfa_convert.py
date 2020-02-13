@@ -12,7 +12,7 @@
 import re
 import csv
 import argparse
-from datetime import datetime  # TODO: выяснить разницу с "import datetime"
+from datetime import datetime
 
 
 def search_date(line):
@@ -93,10 +93,7 @@ def dict_rplace(line):
 
 
 def line_convert():
-    """Открываем файл для конвертирования и подготавливаем его:
-    удаляем пробелы в конце каждой строки;
-    удаляем точку в конце строки, если есть;
-    удаляем символ ';' в конце, если есть.
+    """Открываем файл для конвертирования и подготавливаем его
     """
     with open(args.file, 'r') as file_to_convert:
         for line in file_to_convert:
